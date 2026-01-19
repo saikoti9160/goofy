@@ -1,24 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+
+  const handleGroupTabs = () => {
+    setStatus("loading");
+
+    chrome.runtime.sendMessage({ action: "GROUP_TABS" }, (response) => {
+      if (response?.success) {
+        setStatus("success");
+        setTimeout(() => setStatus("idle"), 3000);
+      } else {
+        setStatus("idle");
+        alert("Grouping failed: " + response?.error);
+      }
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className={`container ${status}`}>
+      <div className="glow-bg"></div>
+
+      <header>
+        <h1 className="logo">Gooofy</h1>
       </header>
+
+      <main>
+        {status === "idle" && (
+          <button className="primary-btn" onClick={handleGroupTabs}>
+            Organize with AI
+          </button>
+        )}
+
+        {status === "loading" && (
+          <div className="loading-state">
+            <div className="shimmer-bar"></div>
+            <p>Gemini is sorting your chaos...</p>
+          </div>
+        )}
+
+        {status === "success" && (
+          <div className="success-state fade-in">
+            <div className="check-icon">✓</div>
+            <h2>All Set!</h2>
+            <p>Your tabs are neatly grouped.</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

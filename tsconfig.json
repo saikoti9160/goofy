@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+        "types": ["chrome"],
     "target": "es5",
     "lib": [
       "dom",
@@ -22,5 +23,5 @@
   },
   "include": [
     "src"
-  ]
+, "public/background.js"  ]
 }

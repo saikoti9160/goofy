@@ -40,5 +40,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.34",
+    "copy-webpack-plugin": "^13.0.1",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1"
   }
 }
