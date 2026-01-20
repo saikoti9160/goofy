@@ -15,6 +15,8 @@ Build the extension:
 npm run build
 
 Load Extension in Chrome
+<img width="566" height="168" alt="image" src="https://github.com/user-attachments/assets/82808807-e189-497c-a788-4ec272d94697" />
+
 
 Open chrome://extensions/
 
@@ -90,5 +92,7 @@ Add dynamic tab group colors based on category
 Add auto-grouping on tab creation/open
 
 Save previous group history for smarter grouping
+![Uploading image.png…]()
+
 
 Contributing
