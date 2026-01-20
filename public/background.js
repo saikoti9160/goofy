@@ -1,4 +1,4 @@
-const GEMINI_API_KEY = "TEST";
+const GEMINI_API_KEY = "TESTING_API_KEY_REPLACE_ME";
 const GEMINI_ENDPOINT =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" +
   GEMINI_API_KEY;
@@ -8,7 +8,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     groupTabsUsingAI()
       .then(() => sendResponse({ success: true }))
       .catch(err => {
-        console.error(err);
         sendResponse({ success: false, error: err.message });
       });
 
