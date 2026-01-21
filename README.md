@@ -16,9 +16,14 @@ npm run build
 
 Load Extension in Chrome
 <img width="460" height="548" alt="image" src="https://github.com/user-attachments/assets/58d4f090-73bb-4491-a0fd-f7cc40d89b46" />
+
+<br/>
 <img width="436" height="515" alt="image" src="https://github.com/user-attachments/assets/6264f259-b0f9-479b-b6e4-8b2da4ea3319" />
+<br/>
+
 <img width="454" height="553" alt="image" src="https://github.com/user-attachments/assets/00d9fbd3-fa48-4203-ac23-ea80bfb43ab1" />
 
+<br/>
 
 <img width="566" height="168" alt="image" src="https://github.com/user-attachments/assets/82808807-e189-497c-a788-4ec272d94697" />
 
