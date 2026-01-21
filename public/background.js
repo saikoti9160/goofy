@@ -1,24 +1,21 @@
-const GEMINI_API_KEY = "TESTING_API_KEY_REPLACE_ME";
-const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" +
-  GEMINI_API_KEY;
+
+// Change this to your deployed URL (e.g. https://your-app.vercel.app)
+const BACKEND_URL = "https://gemini-backend-9wlr.vercel.app/api/group-tabs";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "GROUP_TABS") {
     groupTabsUsingAI()
       .then(() => sendResponse({ success: true }))
       .catch(err => {
+        console.error(err);
         sendResponse({ success: false, error: err.message });
       });
-
-    return true; // REQUIRED
+    return true; 
   }
 });
 
 async function groupTabsUsingAI() {
-  // 1️⃣ Get ALL tabs from ALL windows
   const tabs = await chrome.tabs.query({});
-
   const metadata = tabs
     .filter(tab => tab.id && tab.url && tab.url.startsWith("http"))
     .map(tab => ({
@@ -29,10 +26,8 @@ async function groupTabsUsingAI() {
 
   if (metadata.length === 0) return;
 
-  // 2️⃣ Ask Gemini to group
-  const aiResult = await callGemini(metadata);
+  const aiResult = await callBackend(metadata);
 
-  // 3️⃣ Create Chrome tab groups
   for (const group of aiResult.groups) {
     const tabIds = metadata
       .filter(tab => group.domains.includes(tab.domain))
@@ -40,59 +35,26 @@ async function groupTabsUsingAI() {
 
     if (tabIds.length > 0) {
       const groupId = await chrome.tabs.group({ tabIds });
-      await chrome.tabGroups.update(groupId, {
-        title: group.label
-      });
+      await chrome.tabGroups.update(groupId, { title: group.label });
     }
   }
 }
 
-async function callGemini(tabsMetadata) {
+async function callBackend(tabsMetadata) {
   const prompt = `
-You are a productivity assistant.
+    You are a productivity assistant. Group browser tabs by intent.
+    Rules: Group by domain. Return ONLY valid JSON. No markdown. No explanation.
+    JSON format: {"groups": [{"label": "Work", "domains": ["github.com"]}]}
+    Tabs: ${JSON.stringify(tabsMetadata)}
+  `;
 
-Group browser tabs by intent.
-
-Rules:
-- Group by domain
-- Return ONLY valid JSON
-- No markdown
-- No explanation
-
-JSON format:
-{
-  "groups": [
-    {
-      "label": "Work",
-      "domains": ["github.com", "mail.google.com"]
-    }
-  ]
-}
-
-Tabs:
-${JSON.stringify(tabsMetadata, null, 2)}
-`;
-
-  const response = await fetch(GEMINI_ENDPOINT, {
+  const response = await fetch(BACKEND_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: prompt }]
-        }
-      ]
-    })
+    body: JSON.stringify({ prompt })
   });
 
-  const data = await response.json();
-
-  const text =
-    data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-  if (!text) {
-    throw new Error("No response from Gemini");
-  }
-
-  return JSON.parse(text);
+  if (!response.ok) throw new Error("Backend server error");
+  
+  return await response.json();
 }
